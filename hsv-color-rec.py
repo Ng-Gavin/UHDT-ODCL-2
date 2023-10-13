@@ -1,9 +1,16 @@
 import numpy as np
 import cv2
 from PIL import Image
+import matplotlib.pyplot as plt
+import numpy as np
 
 def identify_color(cluster_center):
     # Determine ranges
+    # CV2: H: 0-179, S: 0-255, V: 0-255
+    # Normal Def: H: 0-1, 0-1
+    # H scale factor: 0.49722222222222222 (360->179)
+    # S and V scale factor: 255 (1 -> 255)
+
     h, s, v = cluster_center
 
     if s < 30:
@@ -16,17 +23,18 @@ def identify_color(cluster_center):
     if v < 50:
         return "Black"
 
-    if h >= 0 and h <= 12:
+    if 0 <= h <= 11.1875:
         return "Red"
-    elif h > 12 and h <= 35:
-        return "Orange"
-    elif h > 165 and h <= 320:
-        return "Brown"
-    elif h > 35 and h <= 85:
+    elif 11.1875 < h <= 29.83333333:
+        if True:
+            return "Orange" #30 degrees
+        else:
+            return "Brown"
+    elif 29.83333333 < h <= 78.3125:
         return "Green"
-    elif h > 85 and h <= 120:
+    elif 78.3125 < h <= 119.33333333:
         return "Blue"
-    elif h > 120 and h <= 165:
+    elif 119.33333333 < h <= 179:
         return "Purple"
 
     return "Unknown"
@@ -34,19 +42,22 @@ def identify_color(cluster_center):
 
 
 # Read the image
-image_path = './Target Printouts/Target4.jpg'
-image_path = './Target Printouts/Target4.jpg'
+# Target 7 brown and orange test
+#image_path = './Target Printouts/Target11.jpg'
+image_path = './Cropped Targets/real3-1.jpg'
 
 
 img = cv2.imread(image_path)
 img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-
+"""
+plt.imshow(img)
+plt.show()
 
 print(img_hsv.shape)
 cv2.imshow('bruh', img_hsv)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-
+"""
 
 
 # Reshape the image to a 2D array of pixels
@@ -55,19 +66,21 @@ pixels = np.float32(pixels)
 
 # Define criteria and apply kmeans()
 criteria = (cv2.TERM_CRITERIA_MAX_ITER, 100, 0.85)
-k = 3
+k = 8
 retval, labels, centers = cv2.kmeans(pixels, k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
 
 # Convert back to 8-bit values
 centers = np.uint8(centers)
 segmented_data = centers[labels.flatten()]
 segmented_image = segmented_data.reshape(img.shape)
-print('Test', segmented_image[1056][2651])
+segmented_image_in_rgb = cv2.cvtColor(segmented_image, cv2.COLOR_HSV2RGB)
+#print('Test', segmented_image[1056][2651])
 #f = open('mbruh.txt', 'w')
 #f.write(str(segmented_image))
 #f.close()
-Image.fromarray(segmented_image, 'HSV').show()
-
+#Image.fromarray(segmented_image_in_rgb, 'RGB').show()
+plt.imshow(segmented_image_in_rgb)
+plt.show()
 # Count occurrences of each cluster label
 unique_labels, counts = np.unique(labels, return_counts=True)
 
