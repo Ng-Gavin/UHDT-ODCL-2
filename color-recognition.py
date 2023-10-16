@@ -53,6 +53,8 @@ def color_rec(source):
     # Pillow route of opening images
     # image = Image.open(image)
     image = source.convert('RGB')
+    #plt.imshow(image)
+    #plt.show()
     image = np.array(image)
     img = image.reshape((-1, 3))
 
@@ -67,9 +69,8 @@ def color_rec(source):
     centers = np.uint8(centroid)
     segmented_data = centers[labels.flatten()]
     segmented_image = segmented_data.reshape((image.shape))
-    plt.imshow(segmented_image)
-    plt.show()
-
+    #plt.imshow(segmented_image)
+    #plt.show()
     # mask orignal image to isolate alphanumeric
     mask = cv2.inRange(segmented_image, centers[2], centers[2])
     result = cv2.bitwise_and(segmented_image, segmented_image, mask=mask)
@@ -106,5 +107,5 @@ def color_rec(source):
 #f.write(str(color_rec(Image.open('DSC01289-1.jpg'))))
 #f.close()
 # Testing code
-alphanum_string, shape_string, alphanum_rgb, shape_rgb, third_string, third_rgb, result = color_rec(Image.open('./Cropped Targets/real3-1.jpg'))
+alphanum_string, shape_string, alphanum_rgb, shape_rgb, third_string, third_rgb, result = color_rec(Image.open('./Target Printouts/Target5.jpg'))
 print(alphanum_string, shape_string, alphanum_rgb, shape_rgb, third_string, third_rgb)

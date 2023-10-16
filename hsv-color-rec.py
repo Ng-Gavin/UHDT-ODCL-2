@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-from PIL import Image
+from PIL import Image, ImageEnhance
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -16,25 +16,25 @@ def identify_color(cluster_center):
     if s < 30:
         if v < 50:
             return "Black"
-        elif v > 200:
+        elif v > 240:
             return "White"
         else:
             return "Gray"
-    if v < 50:
+    if v < 20:
         return "Black"
 
-    if 0 <= h <= 11.1875:
+    if h > 156.625 or h <= 11.1875:
         return "Red"
     elif 11.1875 < h <= 29.83333333:
-        if True:
-            return "Orange" #30 degrees
+        if v < 155:
+            return "Brown" #30 degrees
         else:
-            return "Brown"
+            return "Orange"
     elif 29.83333333 < h <= 78.3125:
         return "Green"
     elif 78.3125 < h <= 119.33333333:
         return "Blue"
-    elif 119.33333333 < h <= 179:
+    elif 119.33333333 < h <= 156.625:
         return "Purple"
 
     return "Unknown"
@@ -43,16 +43,20 @@ def identify_color(cluster_center):
 
 # Read the image
 # Target 7 brown and orange test
-#image_path = './Target Printouts/Target11.jpg'
-image_path = './Cropped Targets/real3-1.jpg'
+#image_path = './Target Printouts/Target5.jpg'
+image_path = './Cropped Targets/DSC01296-1.jpg'
 
-
+im = Image.open(image_path)
+im = ImageEnhance.Color(im)
 img = cv2.imread(image_path)
-img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-"""
-plt.imshow(img)
-plt.show()
+img_hsv = cv2.cvtColor(np.array(im.enhance(2.0)), cv2.COLOR_RGB2HSV)
+#img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
+"""
+plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+plt.show()
+"""
+"""
 print(img_hsv.shape)
 cv2.imshow('bruh', img_hsv)
 cv2.waitKey(0)
@@ -65,7 +69,7 @@ pixels = img_hsv.reshape((-1, 3))
 pixels = np.float32(pixels)
 
 # Define criteria and apply kmeans()
-criteria = (cv2.TERM_CRITERIA_MAX_ITER, 100, 0.85)
+criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.85)
 k = 8
 retval, labels, centers = cv2.kmeans(pixels, k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
 
@@ -73,14 +77,12 @@ retval, labels, centers = cv2.kmeans(pixels, k, None, criteria, 10, cv2.KMEANS_R
 centers = np.uint8(centers)
 segmented_data = centers[labels.flatten()]
 segmented_image = segmented_data.reshape(img.shape)
-segmented_image_in_rgb = cv2.cvtColor(segmented_image, cv2.COLOR_HSV2RGB)
 #print('Test', segmented_image[1056][2651])
 #f = open('mbruh.txt', 'w')
 #f.write(str(segmented_image))
 #f.close()
 #Image.fromarray(segmented_image_in_rgb, 'RGB').show()
-plt.imshow(segmented_image_in_rgb)
-plt.show()
+
 # Count occurrences of each cluster label
 unique_labels, counts = np.unique(labels, return_counts=True)
 
@@ -101,3 +103,7 @@ color_data.sort(key=lambda x: x[2], reverse=True)
 # Print the sorted data
 for color_name, count, percentage, label in color_data:
     print(f"Label: {label}, Color: {color_name}, Count: {count}, Percentage: {percentage:.2f}")
+
+segmented_image_in_rgb = cv2.cvtColor(segmented_image, cv2.COLOR_HSV2RGB)
+plt.imshow(segmented_image_in_rgb)
+plt.show()

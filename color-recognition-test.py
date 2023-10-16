@@ -98,7 +98,7 @@ def color_rec_large(source):
 
 
 # Testing code
-alphanum_string, shape_string, result1, result2 = color_rec_large('image25-0.jpg')
+alphanum_string, shape_string, result1, result2 = color_rec_large('./Target Printouts/Target1.jpg')
 print(f"Alpha:{alphanum_string}, Shape:{shape_string}")
 img = Image.fromarray(result1, 'HSV')
 img.show()
