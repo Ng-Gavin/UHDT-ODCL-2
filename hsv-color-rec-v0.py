@@ -16,43 +16,33 @@ def identify_color(cluster_center):
 
     if s < 30:
         if v < 50:
-            return "BLACK"
-        if v > 240:
-            return "WHITE"
+            return "Black"
+        elif v > 240:
+            return "White"
+        else:
+            return "Gray"
     if v < 20:
-        return "BLACK"
+        return "Black"
 
     if h > 156.625 or h <= 11.1875:
-        return "RED"
+        return "Red"
     elif 11.1875 < h <= 28:
         if v < 155:
-            return "BROWN" #30 degrees
+            return "Brown" #30 degrees
         else:
-            return "ORANGE"
+            return "Orange"
     elif 28 < h <= 78.3125:
         if 28.5 < h < 33:
-            return 'BACKGROUND'
+            return 'Background'
         else:
-            return "GREEN"
+            return "Green"
     elif 78.3125 < h <= 119.33333333:
-        return "BLUE"
+        return "Blue"
     elif 119.33333333 < h <= 156.625:
-        return "PURPLE"
-    else:
-        return "Unknown"
+        return "Purple"
 
+    return "Unknown"
 
-color_count = {
-    'BLACK': 0,
-    'WHITE': 0,
-    'RED': 0,
-    'BROWN': 0,
-    'ORANGE': 0,
-    'GREEN': 0,
-    'BLUE': 0,
-    'PURPLE': 0,
-    'BACKGROUND': 0,
-}
 
 
 # Read the image
@@ -60,14 +50,22 @@ color_count = {
 #image_path = './Target Printouts/Target5.jpg'
 image_path = './Cropped Targets/DSC01326-0 copy 2.jpg'
 
-# Using background removal tool:
 im = Image.open(image_path)
 img = cv2.imread(image_path)
-im = remove(im)
-bg_image = Image.new("RGBA", im.size, (255, 251, 0))
-im = Image.alpha_composite(bg_image, im.convert('RGBA'))
+
+# Using background removal tool:
+#im = remove(im)
+#bg_image = Image.new("RGBA", im.size, (255, 251, 0))
+#im = Image.alpha_composite(bg_image, im.convert('RGBA'))
 #im.show()
-img_hsv = cv2.cvtColor(np.array(im), cv2.COLOR_RGB2HSV)
+#img_hsv = cv2.cvtColor(np.array(im), cv2.COLOR_RGB2HSV)
+
+# Using image enhancer
+#im = ImageEnhance.Contrast(im)
+#img_hsv = cv2.cvtColor(np.array(im.enhance(1.15)), cv2.COLOR_RGB2HSV)
+
+# Not using image enhancer
+img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
 """
 plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
@@ -110,7 +108,8 @@ total_pixels = pixels.shape[0]
 color_data = []
 for label, count in zip(unique_labels, counts):
     color_name = identify_color(centers[label])
-    print('bruh', color_count[color_name])
+    if color_name == "Background":
+        continue
     print(label, ':', centers[label])
     percentage = (count / total_pixels) * 100
     color_data.append((color_name, count, percentage, label))
@@ -118,15 +117,9 @@ for label, count in zip(unique_labels, counts):
 # Sort by percentage in descending order
 color_data.sort(key=lambda x: x[2], reverse=True)
 
-
-
 # Print the sorted data
 for color_name, count, percentage, label in color_data:
-    if color_count[color_name] > 0 or color_name == 'BACKGROUND':
-        continue
-    else:
-        print(f"Label: {label}, Color: {color_name}, Count: {count}, Percentage: {percentage:.2f}")
-        color_count[color_name] += 1
+    print(f"Label: {label}, Color: {color_name}, Count: {count}, Percentage: {percentage:.2f}")
 
 segmented_image_in_rgb = cv2.cvtColor(segmented_image, cv2.COLOR_HSV2RGB)
 plt.imshow(segmented_image_in_rgb)
