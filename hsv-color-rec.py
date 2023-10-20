@@ -1,4 +1,3 @@
-import numpy as np
 import cv2
 from PIL import Image, ImageEnhance
 import matplotlib.pyplot as plt
@@ -25,8 +24,8 @@ def identify_color(cluster_center):
     if h > 156.625 or h <= 11.1875:
         #if v < 155:
         #    return 'BROWN'
-        if s <= 80:
-            if v > 40:
+        if s <= 204:
+            if v > 102:
                 return 'BROWN'
             else:
                 return 'BROWN'
@@ -91,7 +90,7 @@ def color_rec (image_path):
 
     # Define criteria and apply kmeans()
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.85)
-    k = 6
+    k = 10
     retval, labels, centers = cv2.kmeans(pixels, k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
 
     # Convert back to 8-bit values
@@ -133,7 +132,7 @@ def color_rec (image_path):
     plt.show()
     return colors
 
-for color in color_rec('./Cropped Targets/image8-3.jpg'):
+for color in color_rec('../Training Data/Real Life Cropped Targerts/image7-3.jpg '):
     print(color)
     #for color_name, label, hsv, percentage in color:
     #    print(f'Color: {color_name}, HSV: {hsv}, Percentage: {percentage}')
