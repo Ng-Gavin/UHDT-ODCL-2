@@ -63,7 +63,7 @@ def color_rec(source):
 
     # kmeans settings
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.85)
-    retval, labels, centroid = cv2.kmeans(img, 8, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+    retval, labels, centroid = cv2.kmeans(img, 10, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
 
     # apply kmeans color rounding to original image
     centers = np.uint8(centroid)
@@ -108,5 +108,5 @@ def color_rec(source):
 #f.write(str(color_rec(Image.open('DSC01289-1.jpg'))))
 #f.close()
 # Testing code
-alphanum_string, shape_string, alphanum_rgb, shape_rgb, third_string, third_rgb, result = color_rec(Image.open('./Target Printouts/Target5.jpg'))
+alphanum_string, shape_string, alphanum_rgb, shape_rgb, third_string, third_rgb, result = color_rec(Image.open('./Cropped Targets/image1-0.jpg'))
 print(alphanum_string, shape_string, alphanum_rgb, shape_rgb, third_string, third_rgb)
