@@ -38,9 +38,9 @@ def identify_color(cluster_center):
             return 'BACKGROUND'
         else:
             return "GREEN"
-    elif 93 < h <= 116:
+    elif 93 < h <= 120:
         return "BLUE"
-    elif 116 < h <= 156.625:
+    elif 120 < h <= 156.625:
         if s < 23:
             return "BROWN"
         return "PURPLE"
@@ -111,7 +111,7 @@ def color_rec (image_path):
         percentage = (count / total_pixels) * 100
         hsv = np.array(centers[label]).tolist()
         color_data.append((color_name, count, percentage, label, hsv))
-        print(label, ':', centers[label])
+        #print(label, ':', centers[label])
 
     # Sort by percentage in descending order
     color_data.sort(key=lambda x: x[2], reverse=True)
@@ -121,7 +121,7 @@ def color_rec (image_path):
 
     # Print the sorted data
     for color_name, count, percentage, label, hsv in color_data:
-        print(f"Label: {label}, Color: {color_name}, Count: {count}, Percentage: {percentage:.2f}")
+        #print(f"Label: {label}, Color: {color_name}, Count: {count}, Percentage: {percentage:.2f}")
         if color_count[color_name] > 0 or color_name == 'BACKGROUND':
             continue
         else:
@@ -130,37 +130,7 @@ def color_rec (image_path):
     #cv2.imshow('segmented', segmented_image)
     #cv2.waitKey(0)
     #cv2.destroyAllWindows()
-    segmented_image_in_rgb = cv2.cvtColor(segmented_image, cv2.COLOR_HSV2RGB)
-    original_img = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2RGB)
-    plt.imshow(segmented_image_in_rgb)
-    plt.show()
-    if colors[0][0] == "ORANGE":
-        lowerbound1 = np.array([11, 0, 198])
-        upperbound1 = np.array([28, 255, 255])
-        mask1 = cv2.inRange(segmented_image, lowerbound1, upperbound1)
-        mask = mask1
-        result = cv2.bitwise_and(segmented_image, segmented_image, mask=mask)
-        cv2.imshow('mask1', mask)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-    if colors[1][0] == "BROWN":
-        lowerbound1 = np.array([0, 0, 102])
-        upperbound1 = np.array([11, 255, 255])
-        lowerbound2 = np.array([11, 0, 0])
-        upperbound2 = np.array([28, 255, 198])
-        lowerbound3 = np.array([156, 0, 102])
-        upperbound3 = np.array([181, 255, 255])
-        mask1 = cv2.inRange(segmented_image, lowerbound1, upperbound1)
-        mask2 = cv2.inRange(segmented_image, lowerbound2, upperbound2)
-        mask3 = cv2.inRange(segmented_image, lowerbound3, upperbound3)
-        lowerbound4 = np.array([11, 0, 198])
-        upperbound4 = np.array([28, 255, 255])
-        mask4 = cv2.inRange(segmented_image, lowerbound4, upperbound4)
-        mask = mask1 + mask2 + mask3
-        result = cv2.bitwise_and(segmented_image, segmented_image, mask=mask)
-        cv2.imshow('mask1', mask)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+
     """
     plt.imshow(segmented_image_in_rgb)
     plt.show()
@@ -220,9 +190,4 @@ def color_rec (image_path):
     #plt.show()
     #plt.imshow(result1 +result2)
     #plt.show()
-    return colors[0][1], colors[1][0]
-
-for color in color_rec('../Training Data/testPicturesA/Arec40.png'):
-    print(color[0], color[2])
-    #for color_name, label, hsv, percentage in color:
-    #    print(f'Color: {color_name}, HSV: {hsv}, Percentage: {percentage}')
+    return colors[0][0], colors[1][0]

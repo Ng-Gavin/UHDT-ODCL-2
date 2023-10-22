@@ -3,38 +3,45 @@ from sklearn.cluster import KMeans
 import numpy as np
 from PIL import Image, ImageEnhance
 import colorsys
+import matplotlib.pyplot as plt
 
 
 def round_rgb_to_color(rgb):
-    r, g, b = rgb
-    if r >= 128:
-        if g < 64 and b < 64:
-            return "RED"
-        elif g >= 64 and b < 128:
-            return "ORANGE"
-        elif g >= 128 and b < 128:
-            return "YELLOW"
-        elif r >= 200 and g >= 200 and b >= 200:
-            return "WHITE"
-        elif r >= g + 30 and b >= g + 30:
-            return "PURPLE"
-        else:
-            return "UNKNOWN"
-    else:
-        if g >= 128 and b < 128:
-            return "GREEN"
-        elif g < 128 and b >= 128:
-            return "BLUE"
-        elif r >= 64 and g < 128 and b >= 64:
-            return "PURPLE"
-        elif r == 0 and g == 0 and b == 0:
+    h, s, v = cluster_center
+
+    if s < 30:
+        if v < 50:
             return "BLACK"
-        elif r == 128 and g == 128 and b == 128:
-            return "GRAY"
-        elif r >= 128 and g >= 64 and b == 0:
-            return "BROWN"
+        if v > 240:
+            return "WHITE"
+    if v < 20:
+        return "BLACK"
+
+    if h > 156.625 or h <= 11.1875:
+        # if v < 155:
+        #    return 'BROWN'
+        if s <= 90:
+            return 'BROWN'
         else:
-            return "UNKNOWN"
+            return "RED"
+    elif 11.1875 < h <= 28:
+        if v < 155:
+            return "BROWN"  # 30 degrees
+        else:
+            return "ORANGE"
+    elif 28 < h <= 93:
+        if 28.5 < h < 33:
+            return 'BACKGROUND'
+        else:
+            return "GREEN"
+    elif 93 < h <= 127.78611111:
+        return "BLUE"
+    elif 127.78611111 < h <= 156.625:
+        if s < 23:
+            return "BROWN"
+        return "PURPLE"
+    else:
+        return "Unknown"
 
 
 def color_rec_large(source):
@@ -56,7 +63,7 @@ def color_rec_large(source):
     segmented_data = centers[labels.flatten()]
     segmented_image = segmented_data.reshape((image.shape))
     seg_img = Image.fromarray(segmented_image, 'HSV')
-    seg_img.show()
+    #seg_img.show()
 
     # Get Percentage of Each Color in Image
     labels = list(labels)
@@ -74,9 +81,12 @@ def color_rec_large(source):
     # mask orignal image, two results in case colors are swapped
     mask1 = cv2.inRange(segmented_image, centers[0], centers[0])
     result1 = cv2.bitwise_and(np.ones_like(segmented_image) * 255, np.zeros_like(segmented_image), mask=mask1)
+    plt.imshow(result1)
+    plt.show()
     mask2 = cv2.inRange(segmented_image, centers[1], centers[1])
     result2 = cv2.bitwise_and(segmented_image, segmented_image, mask=mask2)
-
+    plt.imshow(result2)
+    plt.show()
     print(f"Center0: {centers[0]}")
     print(f"Center1: {centers[1]}")
 
@@ -98,7 +108,5 @@ def color_rec_large(source):
 
 
 # Testing code
-alphanum_string, shape_string, result1, result2 = color_rec_large('./Target Printouts/Target1.jpg')
+alphanum_string, shape_string, result1, result2 = color_rec_large('../Training Data/Real Life Cropped Targerts/21-image23-60.jpg')
 print(f"Alpha:{alphanum_string}, Shape:{shape_string}")
-img = Image.fromarray(result1, 'HSV')
-img.show()
