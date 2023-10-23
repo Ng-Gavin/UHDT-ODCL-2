@@ -24,14 +24,23 @@ def identify_color(cluster_center):
     if h > 156.625 or h <= 11.1875:
         # if v < 155:
         #    return 'BROWN'
-        if s <= 105:
-            if s < 65:
-                return 'BROWN'
-            else:
-                if v < 165:
+        if (h > 180 and (h-180) < -3) or h > 3 :
+            if s <= 105:
+                if s < 65:
                     return 'BROWN'
                 else:
-                    return 'RED'
+                    if v < 165:
+                        return 'BROWN'
+                    else:
+                        return 'RED'
+            else:
+                return "RED"
+        elif h < 3 or (h-180) > -3:
+            if s < 200:
+
+                return "BROWN"
+            else:
+                return "RED"
         else:
             return "RED"
     elif 11.1875 < h <= 28:
@@ -48,10 +57,13 @@ def identify_color(cluster_center):
         else:
             return "GREEN"
     elif 93 < h <= 122:
-        if s < 70:
-            return 'PURPLE'
-        else:
+        if h < 110:
             return "BLUE"
+        else:
+            if s < 70:
+                return 'PURPLE'
+            else:
+                return "BLUE"
     elif 122 < h <= 156.625:
         if s < 23:
             return "BROWN"
@@ -59,6 +71,21 @@ def identify_color(cluster_center):
     else:
         return "Unknown"
 
+def get_limits(color):
+    hue = color[0]  # Get the hue value
+
+    # Handle red hue wrap-around
+    if hue >= 165:  # Upper limit for divided red hue
+        lowerLimit = np.array([hue - 20, 100, 100], dtype=np.uint8)
+        upperLimit = np.array([180, 255, 255], dtype=np.uint8)
+    elif hue <= 15:  # Lower limit for divided red hue
+        lowerLimit = np.array([0, 100, 100], dtype=np.uint8)
+        upperLimit = np.array([hue + 20, 255, 255], dtype=np.uint8)
+    else:
+        lowerLimit = np.array([hue - 20, 100, 100], dtype=np.uint8)
+        upperLimit = np.array([hue + 20, 255, 255], dtype=np.uint8)
+
+    return lowerLimit, upperLimit
 def color_rec (image_path):
     color_count = {
         'BLACK': 0,
@@ -101,7 +128,7 @@ def color_rec (image_path):
 
     # Define criteria and apply kmeans()
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.85)
-    k = 10
+    k = 6
     retval, labels, centers = cv2.kmeans(pixels, k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
 
     # Convert back to 8-bit values
@@ -146,6 +173,17 @@ def color_rec (image_path):
     original_img = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2RGB)
     plt.imshow(segmented_image_in_rgb)
     plt.show()
+    lowerbound, upperbound = get_limits(colors[0][2])
+    mask = cv2.inRange(segmented_image, lowerbound, upperbound)
+    cv2.imshow('mask1', mask)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    lowerbound, upperbound = get_limits(colors[1][2])
+    mask = cv2.inRange(segmented_image, lowerbound, upperbound)
+    cv2.imshow('mask1', mask)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    """
     if colors[0][0] == "ORANGE":
         lowerbound1 = np.array([11, 0, 198])
         upperbound1 = np.array([28, 255, 255])
@@ -155,6 +193,8 @@ def color_rec (image_path):
         cv2.imshow('mask1', mask)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
+    """
+    """
     if colors[1][0] == "BROWN":
         lowerbound1 = np.array([0, 0, 102])
         upperbound1 = np.array([11, 255, 255])
@@ -173,6 +213,7 @@ def color_rec (image_path):
         cv2.imshow('mask1', mask)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
+    """
     """
     plt.imshow(segmented_image_in_rgb)
     plt.show()
@@ -234,4 +275,4 @@ def color_rec (image_path):
     #plt.show()
     return colors[0][0], colors[1][0], colors[0][2], colors[1][2]
 
-print(color_rec('../Training Data/Combination Set/125-image23-24.jpg'))
+print(color_rec('../Training Data/Last Year Full Compiled/18-image17.jpg'))

@@ -95,10 +95,15 @@ def color_rec_test(directory_path):
                     print(full_path)
             else:
                 continue
-
-        detected_bg_color, detected_alphanum_color, bg_hsv, alphanum_hsv = color_rec(full_path)
+        try:
+            detected_bg_color, detected_alphanum_color, bg_hsv, alphanum_hsv = color_rec(full_path)
+        except:
+            print(color_rec(full_path))
+            print(color_rec(full_path)[0], color_rec(full_path)[1], color_rec(full_path)[2],color_rec(full_path)[3],)
+            print(full_path + " is causing an error?")
         color_counts[detected_bg_color]['detected'] += 1
         color_counts[detected_alphanum_color]['detected'] += 1
+        progress += 1
         if detected_bg_color == bg_color or  detected_bg_color == alphanum_color or detected_alphanum_color == alphanum_color or detected_alphanum_color == bg_color:
             if detected_bg_color == bg_color and detected_alphanum_color == alphanum_color:
                 exact_match += 1
@@ -106,6 +111,7 @@ def color_rec_test(directory_path):
                 at_least_one += 1
             elif detected_bg_color == alphanum_color and detected_alphanum_color == bg_color:
                 order_switched += 1
+                at_least_one += 1
                 print(
                     f'N: {progress}) Path: {full_path}, Detected BG: {detected_bg_color} ({bg_hsv}), Expected BG: {bg_color}, Detected Alphanum: {detected_alphanum_color} ({alphanum_hsv}), Expected Alphanum: {alphanum_color} ::SWITCHED::')
             elif detected_bg_color == bg_color or detected_alphanum_color == alphanum_color:
@@ -117,7 +123,6 @@ def color_rec_test(directory_path):
                     f'N: {progress}) Path: {full_path}, Detected BG: {detected_bg_color} ({bg_hsv}), Expected BG: {bg_color}, Detected Alphanum: {detected_alphanum_color} ({alphanum_hsv}), Expected Alphanum: {alphanum_color}')
         else:
             print(f'Path: {full_path}, Detected BG: {detected_bg_color} ({bg_hsv}), Expected BG: {bg_color}, Detected Alphanum: {detected_alphanum_color} ({alphanum_hsv}), Expected Alphanum: {alphanum_color}')
-        progress += 1
     print('RESULTS')
     print(f'N: {len(images)}, Exact Matches: {exact_match}, Exact Matches and Switched Order: {order_switched}, At Least One: {at_least_one}')
     black, white, red, orange, brown, green, blue, purple = color_counts

@@ -24,7 +24,7 @@ def identify_color(cluster_center):
     if h > 156.625 or h <= 11.1875:
         # if v < 155:
         #    return 'BROWN'
-        if h > 3 or (h-180) < -3:
+        if (h > 180 and (h-180) < -3) or h > 3 :
             if s <= 105:
                 if s < 65:
                     return 'BROWN'
@@ -33,6 +33,12 @@ def identify_color(cluster_center):
                         return 'BROWN'
                     else:
                         return 'RED'
+            else:
+                return "RED"
+        elif h < 3 or (h-180) > -3:
+            if s < 200:
+
+                return "BROWN"
             else:
                 return "RED"
         else:
@@ -89,25 +95,13 @@ def color_rec (image_path):
     # Convert the image to
     img_hsv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2HSV)
 
-    """
-    plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-    plt.show()
-    """
-    """
-    print(img_hsv.shape)
-    cv2.imshow('bruh', img_hsv)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    """
-
-
     # Reshape the image to a 2D array of pixels
     pixels = img_hsv.reshape((-1, 3))
     pixels = np.float32(pixels)
 
     # Define criteria and apply kmeans()
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.85)
-    k = 10
+    k = 6
     retval, labels, centers = cv2.kmeans(pixels, k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
 
     # Convert back to 8-bit values
@@ -129,7 +123,6 @@ def color_rec (image_path):
         percentage = (count / total_pixels) * 100
         hsv = np.array(centers[label]).tolist()
         color_data.append((color_name, count, percentage, label, hsv))
-        #print(label, ':', centers[label])
 
     # Sort by percentage in descending order
     color_data.sort(key=lambda x: x[2], reverse=True)
@@ -145,67 +138,4 @@ def color_rec (image_path):
         else:
             colors.append((color_name, label, hsv, percentage))
             color_count[color_name] += 1
-    #cv2.imshow('segmented', segmented_image)
-    #cv2.waitKey(0)
-    #cv2.destroyAllWindows()
-
-    """
-    plt.imshow(segmented_image_in_rgb)
-    plt.show()
-    lowerbound1 = np.array([0, 0, 102])
-    upperbound1 = np.array([11, 255, 255])
-    lowerbound2 = np.array([11, 0, 0])
-    upperbound2 = np.array([28, 255, 198])
-    lowerbound3 = np.array([156, 0, 102])
-    upperbound3 = np.array([181, 255, 255])
-    mask1 = cv2.inRange(segmented_image, lowerbound1, upperbound1)
-    mask2 = cv2.inRange(segmented_image, lowerbound2, upperbound2)
-    mask3 = cv2.inRange(segmented_image, lowerbound3, upperbound3)
-    lowerbound4 = np.array([11, 0, 198])
-    upperbound4 = np.array([28, 255, 255])
-    mask4 = cv2.inRange(segmented_image, lowerbound4, upperbound4)
-    mask = mask1+mask2+mask3
-    result = cv2.bitwise_and(segmented_image, segmented_image, mask=mask)
-    cv2.imshow('mask1', mask)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    """
-    # print(colors[0][0])
-    # mask1 = cv2.inRange(img_hsv, np.array([119, 29, 222]), np.array([119, 29, 222]))
-    # result1 = cv2.bitwise_and(original_img, original_img, mask=mask1)
-    # plt.imshow(cv2.cvtColor(result1, cv2.COLOR_HSV2RGB))
-    # plt.show()
-    # print(colors[1][0])
-    # mask2 = cv2.inRange(segmented_image, centers[colors[1][1]], centers[colors[1][1]])
-    # result2 = cv2.bitwise_and(original_img, original_img, mask=mask2)
-    # plt.imshow(cv2.cvtColor(result2, cv2.COLOR_HSV2RGB))
-    # plt.show()
-    # plt.imshow(result1 +result2)
-    # plt.show()
-    # #print(colors[0][0])
-    # mask1 = cv2.inRange(segmented_image, centers[colors[0][1]], centers[colors[0][1]])
-    # result1 = cv2.bitwise_and(segmented_image, segmented_image, mask=mask1)
-    # #plt.imshow(cv2.cvtColor(result1, cv2.COLOR_HSV2RGB))
-    # cv2.imshow('mask1', mask1)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-    # cv2.imshow('mask1', result1)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-    # print(colors[1][0])
-    # mask2 = cv2.inRange(segmented_image, centers[colors[1][1]], centers[colors[1][1]])
-    # result2 = cv2.bitwise_and(segmented_image, segmented_image, mask=mask2)
-    # cv2.imshow('mask2', mask2)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-    # cv2.imshow('mask1', result2)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-    # cv2.imshow('mask1', result1+result2)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-    #plt.imshow(cv2.cvtColor(result2, cv2.COLOR_HSV2RGB))
-    #plt.show()
-    #plt.imshow(result1 +result2)
-    #plt.show()
     return colors[0][0], colors[1][0], colors[0][2], colors[1][2]

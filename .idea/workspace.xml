@@ -9,7 +9,6 @@
       <change beforePath="$PROJECT_DIR$/hsv-color-rec-test.py" beforeDir="false" afterPath="$PROJECT_DIR$/hsv-color-rec-test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hsv-color-rec.py" beforeDir="false" afterPath="$PROJECT_DIR$/hsv-color-rec.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hsv.py" beforeDir="false" afterPath="$PROJECT_DIR$/hsv.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -175,6 +174,16 @@
           <url>file://$PROJECT_DIR$/hsv.py</url>
           <line>6</line>
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/hsv-color-rec-test.py</url>
+          <line>79</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/hsv-color-rec.py</url>
+          <line>6</line>
+          <option name="timeStamp" value="5" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
