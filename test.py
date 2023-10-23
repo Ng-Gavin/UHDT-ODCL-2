@@ -1,22 +1,26 @@
-import cv2
-from PIL import Image, ImageEnhance
-import matplotlib.pyplot as plt
-import numpy as np
-from rembg import remove
-# Read images in CV2:
-img = Image.open('../Training Data/Real Life Cropped Targerts/image7-3.jpg')
+import plistlib
 
-# Remove background and replace with yellow:
-img = remove(img)
-bg_image = Image.new("RGBA", img.size, (255, 251, 0))
-img = Image.alpha_composite(bg_image, img.convert('RGBA'))
+import xattr
+import plistlib
+def get_file_comment(file_path):
+    # Define the name of the attribute
+    attr_name = "com.apple.metadata:kMDItemComment"
 
-# Convert the image to
-img_hsv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2HSV)
+    # Read the extended attribute from the file
+    try:
+        attr_data = xattr.getxattr(file_path, attr_name)
+    except:
+        return file_path
 
-mask1 = cv2.inRange(segmented_image, centers[0], centers[0])
-result1 = cv2.bitwise_and(segmented_image, segmented_image, mask=mask1)
-mask2 = cv2.inRange(segmented_image, centers[1], centers[1])
-result2 = cv2.bitwise_and(segmented_image, segmented_image, mask=mask2)
-plt.imshow(result2)
-plt.show()
+    # The comment is stored in binary plist format, so we need to deserialize it
+    # 'plistlib.loads' expects a bytes object and returns the deserialized plist
+    comment = plistlib.loads(attr_data)
+
+    # If the comment exists, it should be a string inside a list
+    if comment:
+        return comment  # Returning the comment string
+    else:
+        return None
+
+
+print(get_file_comment('../Training Data/Last Year Full Crop/249-image5-64.jpg'))

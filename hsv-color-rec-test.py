@@ -14,7 +14,7 @@ from hsv import color_rec
 
 def get_file_comment(file_path):
     # Define the name of the attribute
-    attr_name = "com.apple.metadata:kMDItemFinderComment"
+    attr_name = "com.apple.metadata:kMDItemComment"
 
     # Read the extended attribute from the file
     try:
@@ -96,7 +96,7 @@ def color_rec_test(directory_path):
             else:
                 continue
 
-        detected_bg_color, detected_alphanum_color = color_rec(full_path)
+        detected_bg_color, detected_alphanum_color, bg_hsv, alphanum_hsv = color_rec(full_path)
         color_counts[detected_bg_color]['detected'] += 1
         color_counts[detected_alphanum_color]['detected'] += 1
         if detected_bg_color == bg_color or  detected_bg_color == alphanum_color or detected_alphanum_color == alphanum_color or detected_alphanum_color == bg_color:
@@ -104,24 +104,28 @@ def color_rec_test(directory_path):
                 exact_match += 1
                 order_switched += 1
                 at_least_one += 1
-            elif (detected_bg_color == bg_color or detected_alphanum_color == alphanum_color):
-                at_least_one += 1
-                print(
-                    f'N: {progress}) Path: {full_path}, Detected BG: {detected_bg_color}, Expected BG: {bg_color}, Detected Alphanum: {detected_alphanum_color}, Expected Alphanum: {alphanum_color}')
-            elif detected_bg_color == alphanum_color and bg_color == alphanum_color:
+            elif detected_bg_color == alphanum_color and detected_alphanum_color == bg_color:
                 order_switched += 1
                 print(
-                    f'N: {progress}) Path: {full_path}, Detected BG: {detected_bg_color}, Expected BG: {bg_color}, Detected Alphanum: {detected_alphanum_color}, Expected Alphanum: {alphanum_color} ::SWITCHED::')
+                    f'N: {progress}) Path: {full_path}, Detected BG: {detected_bg_color} ({bg_hsv}), Expected BG: {bg_color}, Detected Alphanum: {detected_alphanum_color} ({alphanum_hsv}), Expected Alphanum: {alphanum_color} ::SWITCHED::')
+            elif detected_bg_color == bg_color or detected_alphanum_color == alphanum_color:
+                print(
+                    f'N: {progress}) Path: {full_path}, Detected BG: {detected_bg_color} ({bg_hsv}), Expected BG: {bg_color}, Detected Alphanum: {detected_alphanum_color} ({alphanum_hsv}), Expected Alphanum: {alphanum_color} ::ATLEAST1::')
+                at_least_one += 1
             else:
                 print(
-                    f'N: {progress}) Path: {full_path}, Detected BG: {detected_bg_color}, Expected BG: {bg_color}, Detected Alphanum: {detected_alphanum_color}, Expected Alphanum: {alphanum_color} ::ATLEAST1::')
+                    f'N: {progress}) Path: {full_path}, Detected BG: {detected_bg_color} ({bg_hsv}), Expected BG: {bg_color}, Detected Alphanum: {detected_alphanum_color} ({alphanum_hsv}), Expected Alphanum: {alphanum_color}')
         else:
-            print(f'Path: {full_path}, Detected BG: {detected_bg_color}, Expected BG: {bg_color}, Detected Alphanum: {detected_alphanum_color}, Expected Alphanum: {alphanum_color}')
+            print(f'Path: {full_path}, Detected BG: {detected_bg_color} ({bg_hsv}), Expected BG: {bg_color}, Detected Alphanum: {detected_alphanum_color} ({alphanum_hsv}), Expected Alphanum: {alphanum_color}')
         progress += 1
+    print('RESULTS')
     print(f'N: {len(images)}, Exact Matches: {exact_match}, Exact Matches and Switched Order: {order_switched}, At Least One: {at_least_one}')
+    black, white, red, orange, brown, green, blue, purple = color_counts
+    for key in color_counts.keys():
+        print(f'EXPECTED {key}: {color_counts[key]["expected"]}  DETECTED {key}: {color_counts[key]["detected"]} ({color_counts[key]["detected"]/color_counts[key]["expected"] * 100 if color_counts[key]["expected"] > 0 else "Detected " + str(color_counts[key]["detected"]) + "when none were detected"})')
 
 
 
 # Specify the path to your directory
-path_to_directory = "../Training Data/Target Printouts"
+path_to_directory = "../Training Data/Combination Set"
 color_rec_test(path_to_directory)

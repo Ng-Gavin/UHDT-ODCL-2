@@ -24,13 +24,22 @@ def identify_color(cluster_center):
     if h > 156.625 or h <= 11.1875:
         # if v < 155:
         #    return 'BROWN'
-        if s <= 78:
-            return 'BROWN'
+        if s <= 105:
+            if s < 65:
+                return 'BROWN'
+            else:
+                if v < 165:
+                    return 'BROWN'
+                else:
+                    return 'RED'
         else:
             return "RED"
     elif 11.1875 < h <= 28:
         if v < 135:
-            return "BROWN"  # 30 degrees
+            if s < 90:
+                return "BROWN"  # 30 degrees
+            else:
+                return "ORANGE"
         else:
             return "ORANGE"
     elif 28 < h <= 93:
@@ -38,9 +47,12 @@ def identify_color(cluster_center):
             return 'BACKGROUND'
         else:
             return "GREEN"
-    elif 93 < h <= 116:
-        return "BLUE"
-    elif 116 < h <= 156.625:
+    elif 93 < h <= 122:
+        if s < 70:
+            return 'PURPLE'
+        else:
+            return "BLUE"
+    elif 122 < h <= 156.625:
         if s < 23:
             return "BROWN"
         return "PURPLE"
@@ -220,9 +232,6 @@ def color_rec (image_path):
     #plt.show()
     #plt.imshow(result1 +result2)
     #plt.show()
-    return colors[0][1], colors[1][0]
+    return colors[0][0], colors[1][0], colors[0][2], colors[1][2]
 
-for color in color_rec('../Training Data/testPicturesA/Arec40.png'):
-    print(color[0], color[2])
-    #for color_name, label, hsv, percentage in color:
-    #    print(f'Color: {color_name}, HSV: {hsv}, Percentage: {percentage}')
+print(color_rec('../Training Data/Combination Set/125-image23-24.jpg'))
