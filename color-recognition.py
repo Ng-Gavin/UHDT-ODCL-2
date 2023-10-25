@@ -108,5 +108,5 @@ def color_rec(source):
 #f.write(str(color_rec(Image.open('DSC01289-1.jpg'))))
 #f.close()
 # Testing code
-alphanum_string, shape_string, alphanum_rgb, shape_rgb, third_string, third_rgb, result = color_rec(Image.open('./Cropped Targets/image1-0.jpg'))
+alphanum_string, shape_string, alphanum_rgb, shape_rgb, third_string, third_rgb, result = color_rec(Image.open('../Training Data/Last Year Full Compiled/18-image17.jpg'))
 print(alphanum_string, shape_string, alphanum_rgb, shape_rgb, third_string, third_rgb)

@@ -3,73 +3,8 @@ from PIL import Image, ImageEnhance
 import matplotlib.pyplot as plt
 import numpy as np
 from rembg import remove
-
-def identify_color(cluster_center):
-    # Determine ranges
-    # CV2: H: 0-179, S: 0-255, V: 0-255
-    # Normal Def: H: 0-1, 0-1
-    # H scale factor: 0.49722222222222222 (360->179)
-    # S and V scale factor: 255 (1 -> 255)
-
-    h, s, v = cluster_center
-
-    if s < 30:
-        if v < 50:
-            return "BLACK"
-        if v > 240:
-            return "WHITE"
-    if v < 20:
-        return "BLACK"
-
-    if h > 156.625 or h <= 11.1875:
-        # if v < 155:
-        #    return 'BROWN'
-        if (h > 180 and (h-180) < -3) or h > 3 :
-            if s <= 105:
-                if s < 65:
-                    return 'BROWN'
-                else:
-                    if v < 165:
-                        return 'BROWN'
-                    else:
-                        return 'RED'
-            else:
-                return "RED"
-        elif h < 3 or (h-180) > -3:
-            if s < 200:
-
-                return "BROWN"
-            else:
-                return "RED"
-        else:
-            return "RED"
-    elif 11.1875 < h <= 28:
-        if v < 135:
-            if s < 90:
-                return "BROWN"  # 30 degrees
-            else:
-                return "ORANGE"
-        else:
-            return "ORANGE"
-    elif 28 < h <= 93:
-        if 28.5 < h < 33:
-            return 'BACKGROUND'
-        else:
-            return "GREEN"
-    elif 93 < h <= 122:
-        if h < 110:
-            return "BLUE"
-        else:
-            if s < 70:
-                return 'PURPLE'
-            else:
-                return "BLUE"
-    elif 122 < h <= 156.625:
-        if s < 23:
-            return "BROWN"
-        return "PURPLE"
-    else:
-        return "Unknown"
+from hsv import identify_color
+from masks import create_masks
 
 def get_limits(color):
     hue = color[0]  # Get the hue value
@@ -169,110 +104,21 @@ def color_rec (image_path):
     #cv2.imshow('segmented', segmented_image)
     #cv2.waitKey(0)
     #cv2.destroyAllWindows()
+
     segmented_image_in_rgb = cv2.cvtColor(segmented_image, cv2.COLOR_HSV2RGB)
     original_img = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2RGB)
-    plt.imshow(segmented_image_in_rgb)
-    plt.show()
-    lowerbound, upperbound = get_limits(colors[0][2])
-    mask = cv2.inRange(segmented_image, lowerbound, upperbound)
-    cv2.imshow('mask1', mask)
+    mask1 = create_masks(segmented_image, colors[0][0], color_data)
+    result = cv2.bitwise_and(segmented_image, segmented_image, mask=mask1)
+    cv2.imshow('mask1', mask1)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-    lowerbound, upperbound = get_limits(colors[1][2])
-    mask = cv2.inRange(segmented_image, lowerbound, upperbound)
-    cv2.imshow('mask1', mask)
+
+    mask2 = create_masks(segmented_image, colors[1][0], color_data)
+    result = cv2.bitwise_and(segmented_image, segmented_image, mask=mask2)
+    cv2.imshow('mask1', mask2)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-    """
-    if colors[0][0] == "ORANGE":
-        lowerbound1 = np.array([11, 0, 198])
-        upperbound1 = np.array([28, 255, 255])
-        mask1 = cv2.inRange(segmented_image, lowerbound1, upperbound1)
-        mask = mask1
-        result = cv2.bitwise_and(segmented_image, segmented_image, mask=mask)
-        cv2.imshow('mask1', mask)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-    """
-    """
-    if colors[1][0] == "BROWN":
-        lowerbound1 = np.array([0, 0, 102])
-        upperbound1 = np.array([11, 255, 255])
-        lowerbound2 = np.array([11, 0, 0])
-        upperbound2 = np.array([28, 255, 198])
-        lowerbound3 = np.array([156, 0, 102])
-        upperbound3 = np.array([181, 255, 255])
-        mask1 = cv2.inRange(segmented_image, lowerbound1, upperbound1)
-        mask2 = cv2.inRange(segmented_image, lowerbound2, upperbound2)
-        mask3 = cv2.inRange(segmented_image, lowerbound3, upperbound3)
-        lowerbound4 = np.array([11, 0, 198])
-        upperbound4 = np.array([28, 255, 255])
-        mask4 = cv2.inRange(segmented_image, lowerbound4, upperbound4)
-        mask = mask1 + mask2 + mask3
-        result = cv2.bitwise_and(segmented_image, segmented_image, mask=mask)
-        cv2.imshow('mask1', mask)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-    """
-    """
-    plt.imshow(segmented_image_in_rgb)
-    plt.show()
-    lowerbound1 = np.array([0, 0, 102])
-    upperbound1 = np.array([11, 255, 255])
-    lowerbound2 = np.array([11, 0, 0])
-    upperbound2 = np.array([28, 255, 198])
-    lowerbound3 = np.array([156, 0, 102])
-    upperbound3 = np.array([181, 255, 255])
-    mask1 = cv2.inRange(segmented_image, lowerbound1, upperbound1)
-    mask2 = cv2.inRange(segmented_image, lowerbound2, upperbound2)
-    mask3 = cv2.inRange(segmented_image, lowerbound3, upperbound3)
-    lowerbound4 = np.array([11, 0, 198])
-    upperbound4 = np.array([28, 255, 255])
-    mask4 = cv2.inRange(segmented_image, lowerbound4, upperbound4)
-    mask = mask1+mask2+mask3
-    result = cv2.bitwise_and(segmented_image, segmented_image, mask=mask)
-    cv2.imshow('mask1', mask)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    """
-    # print(colors[0][0])
-    # mask1 = cv2.inRange(img_hsv, np.array([119, 29, 222]), np.array([119, 29, 222]))
-    # result1 = cv2.bitwise_and(original_img, original_img, mask=mask1)
-    # plt.imshow(cv2.cvtColor(result1, cv2.COLOR_HSV2RGB))
-    # plt.show()
-    # print(colors[1][0])
-    # mask2 = cv2.inRange(segmented_image, centers[colors[1][1]], centers[colors[1][1]])
-    # result2 = cv2.bitwise_and(original_img, original_img, mask=mask2)
-    # plt.imshow(cv2.cvtColor(result2, cv2.COLOR_HSV2RGB))
-    # plt.show()
-    # plt.imshow(result1 +result2)
-    # plt.show()
-    # #print(colors[0][0])
-    # mask1 = cv2.inRange(segmented_image, centers[colors[0][1]], centers[colors[0][1]])
-    # result1 = cv2.bitwise_and(segmented_image, segmented_image, mask=mask1)
-    # #plt.imshow(cv2.cvtColor(result1, cv2.COLOR_HSV2RGB))
-    # cv2.imshow('mask1', mask1)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-    # cv2.imshow('mask1', result1)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-    # print(colors[1][0])
-    # mask2 = cv2.inRange(segmented_image, centers[colors[1][1]], centers[colors[1][1]])
-    # result2 = cv2.bitwise_and(segmented_image, segmented_image, mask=mask2)
-    # cv2.imshow('mask2', mask2)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-    # cv2.imshow('mask1', result2)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-    # cv2.imshow('mask1', result1+result2)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-    #plt.imshow(cv2.cvtColor(result2, cv2.COLOR_HSV2RGB))
-    #plt.show()
-    #plt.imshow(result1 +result2)
-    #plt.show()
+
     return colors[0][0], colors[1][0], colors[0][2], colors[1][2]
 
 print(color_rec('../Training Data/Last Year Full Compiled/18-image17.jpg'))
