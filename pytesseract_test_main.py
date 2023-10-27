@@ -16,6 +16,7 @@ timeslooped = 1
 #create dictionary to hold the incorrect and correct outputs (equivalent of hashmap?)
 CorOutputFreq= {}
 IncOutputFreq = {}
+#work in progress
 letterFreq = {}
 
 for file in images:
@@ -50,7 +51,7 @@ print(IncOutputFreq)
 #to get overall accuracy:
 numcorrect = [int(CorOutputFreq[num]) for num in CorOutputFreq]
 totalnumcorrect = sum(numcorrect)
-print(f'Overall Accuracy: {sum(numcorrect)/len(images)}')
+print(f'Overall Accuracy: {sum(numcorrect)/len(images)*100:.2f}%')
 #to get individual accuracy (need to change code for 361. It wont always be 361)
 for char in CorOutputFreq:
     print(f'Accuracy for "{char}" is {(CorOutputFreq[char]/361)*100:.2f}%')
