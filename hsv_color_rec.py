@@ -4,23 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from rembg import remove
 from hsv import identify_color
-from masks import create_masks
+from masks import create_masks, create_masks_test
 
-def get_limits(color):
-    hue = color[0]  # Get the hue value
-
-    # Handle red hue wrap-around
-    if hue >= 165:  # Upper limit for divided red hue
-        lowerLimit = np.array([hue - 20, 100, 100], dtype=np.uint8)
-        upperLimit = np.array([180, 255, 255], dtype=np.uint8)
-    elif hue <= 15:  # Lower limit for divided red hue
-        lowerLimit = np.array([0, 100, 100], dtype=np.uint8)
-        upperLimit = np.array([hue + 20, 255, 255], dtype=np.uint8)
-    else:
-        lowerLimit = np.array([hue - 20, 100, 100], dtype=np.uint8)
-        upperLimit = np.array([hue + 20, 255, 255], dtype=np.uint8)
-
-    return lowerLimit, upperLimit
 def color_rec (image_path):
     color_count = {
         'BLACK': 0,
@@ -44,11 +29,10 @@ def color_rec (image_path):
 
     # Convert the image to
     img_hsv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2HSV)
-
-    """
-    plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    plt.imshow(cv2.cvtColor(img_hsv, cv2.COLOR_HSV2RGB))
     plt.show()
-    """
+
+
     """
     print(img_hsv.shape)
     cv2.imshow('bruh', img_hsv)
@@ -63,7 +47,7 @@ def color_rec (image_path):
 
     # Define criteria and apply kmeans()
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.85)
-    k = 6
+    k = 8
     retval, labels, centers = cv2.kmeans(pixels, k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
 
     # Convert back to 8-bit values
@@ -105,20 +89,24 @@ def color_rec (image_path):
     #cv2.waitKey(0)
     #cv2.destroyAllWindows()
 
-    segmented_image_in_rgb = cv2.cvtColor(segmented_image, cv2.COLOR_HSV2RGB)
-    original_img = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2RGB)
+
     mask1 = create_masks(segmented_image, colors[0][0], color_data)
     result = cv2.bitwise_and(segmented_image, segmented_image, mask=mask1)
-    cv2.imshow('mask1', mask1)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    plt.imshow(cv2.cvtColor(result, cv2.COLOR_HSV2RGB))
+    plt.show()
+    #cv2.imshow('mask1', mask1)
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
+
 
     mask2 = create_masks(segmented_image, colors[1][0], color_data)
     result = cv2.bitwise_and(segmented_image, segmented_image, mask=mask2)
-    cv2.imshow('mask1', mask2)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    plt.imshow(cv2.cvtColor(result, cv2.COLOR_HSV2RGB))
+    plt.show()
+    #cv2.imshow('mask2', result)
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
 
     return colors[0][0], colors[1][0], colors[0][2], colors[1][2]
 
-print(color_rec('../Training Data/Last Year Full Compiled/18-image17.jpg'))
+print(color_rec('../Training Data/Combination Set/6-image3-98.jpg'))

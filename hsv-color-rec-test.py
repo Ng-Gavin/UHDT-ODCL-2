@@ -11,7 +11,6 @@ from hsv import color_rec
 
 
 
-
 def get_file_comment(file_path):
     # Define the name of the attribute
     attr_name = "com.apple.metadata:kMDItemComment"
@@ -122,7 +121,7 @@ def color_rec_test(directory_path):
                 print(
                     f'N: {progress}) Path: {full_path}, Detected BG: {detected_bg_color} ({bg_hsv}), Expected BG: {bg_color}, Detected Alphanum: {detected_alphanum_color} ({alphanum_hsv}), Expected Alphanum: {alphanum_color}')
         else:
-            print(f'Path: {full_path}, Detected BG: {detected_bg_color} ({bg_hsv}), Expected BG: {bg_color}, Detected Alphanum: {detected_alphanum_color} ({alphanum_hsv}), Expected Alphanum: {alphanum_color}')
+            print(f'N: {progress}) Path: {full_path}, Detected BG: {detected_bg_color} ({bg_hsv}), Expected BG: {bg_color}, Detected Alphanum: {detected_alphanum_color} ({alphanum_hsv}), Expected Alphanum: {alphanum_color}')
     print('RESULTS')
     print(f'N: {len(images)}, Exact Matches: {exact_match}, Exact Matches and Switched Order: {order_switched}, At Least One: {at_least_one}')
     black, white, red, orange, brown, green, blue, purple = color_counts

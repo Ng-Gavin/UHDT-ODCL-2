@@ -52,6 +52,7 @@ def color_rec(source):
 
     # Pillow route of opening images
     # image = Image.open(image)
+    source = Image.open(source)
     image = source.convert('RGB')
     #plt.imshow(image)
     #plt.show()
@@ -63,19 +64,19 @@ def color_rec(source):
 
     # kmeans settings
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.85)
-    retval, labels, centroid = cv2.kmeans(img, 10, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+    retval, labels, centroid = cv2.kmeans(img, 6, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
 
     # apply kmeans color rounding to original image
     centers = np.uint8(centroid)
     segmented_data = centers[labels.flatten()]
     segmented_image = segmented_data.reshape((image.shape))
-    plt.imshow(segmented_image)
-    plt.show()
+    #plt.imshow(segmented_image)
+    #plt.show()
     # mask orignal image to isolate alphanumeric
     mask = cv2.inRange(segmented_image, centers[2], centers[2])
     result = cv2.bitwise_and(segmented_image, segmented_image, mask=mask)
-    plt.imshow(result)
-    plt.show()
+    #plt.imshow(result)
+    #plt.show()
     # convert RGB values to color names
     colors = []
     rgb = []
@@ -102,11 +103,11 @@ def color_rec(source):
     sorted_arrays = sorted(sorted_arrays, key=lambda x: x[0])
     percent, colors, rgb = zip(*sorted_arrays)
 
-    return colors[0], colors[2], rgb[0], rgb[2], colors[1], rgb[
-        1], result  # alphanum_string, shape_string, alphanum_rgb, shape_rgb
+    return colors[2], colors[0], rgb[2], rgb[0], #colors[1], rgb[
+        #1], #result  # alphanum_string, shape_string, alphanum_rgb, shape_rgb
 #f = open('demo.txt', "w")
 #f.write(str(color_rec(Image.open('DSC01289-1.jpg'))))
 #f.close()
 # Testing code
-alphanum_string, shape_string, alphanum_rgb, shape_rgb, third_string, third_rgb, result = color_rec(Image.open('../Training Data/Last Year Full Compiled/18-image17.jpg'))
-print(alphanum_string, shape_string, alphanum_rgb, shape_rgb, third_string, third_rgb)
+#alphanum_string, shape_string, alphanum_rgb, shape_rgb, third_string, third_rgb, result = color_rec(Image.open('../Training Data/Combination Set/6-image3-98.jpg'))
+#print(alphanum_string, shape_string, alphanum_rgb, shape_rgb, third_string, third_rgb)

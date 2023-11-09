@@ -16,15 +16,22 @@ def identify_color(cluster_center):
     if s < 30:
         if v < 50:
             return "BLACK"
-        if v > 240:
+        if v > 250:
             return "WHITE"
     if v < 20:
         return "BLACK"
 
-    if h > 156.625 or h <= 11.1875:
+    if h > 156.625 or h <= 10:
         # if v < 155:
         #    return 'BROWN'
-        if (h > 180 and (h-180) < -3) or h > 3 :
+        if (h > 180 and (h-180) < -3) or h > 3:
+
+            if 3 < h < 8:
+                if s < 149:
+                    return "BROWN"
+                else:
+                    return "RED"
+
             if s <= 105:
                 if s < 65:
                     return 'BROWN'
@@ -37,13 +44,13 @@ def identify_color(cluster_center):
                 return "RED"
         elif h < 3 or (h-180) > -3:
             if s < 200:
-
                 return "BROWN"
             else:
                 return "RED"
-        else:
             return "RED"
-    elif 11.1875 < h <= 28:
+        else:
+            return 'RED'
+    elif 10 < h <= 28:
         if v < 135:
             if s < 90:
                 return "BROWN"  # 30 degrees
@@ -65,7 +72,7 @@ def identify_color(cluster_center):
             else:
                 return "BLUE"
     elif 122 < h <= 156.625:
-        if s < 23:
+        if s < 20:
             return "BROWN"
         return "PURPLE"
     else:
@@ -101,7 +108,7 @@ def color_rec (image_path):
 
     # Define criteria and apply kmeans()
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.85)
-    k = 6
+    k = 8
     retval, labels, centers = cv2.kmeans(pixels, k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
 
     # Convert back to 8-bit values
@@ -138,4 +145,11 @@ def color_rec (image_path):
         else:
             colors.append((color_name, label, hsv, percentage))
             color_count[color_name] += 1
-    return colors[0][0], colors[1][0], colors[0][2], colors[1][2]
+    try:
+        return colors[0][0], colors[1][0], colors[0][2], colors[1][2]
+    except:
+        print(image_path)
+        print(colors[0][0])
+        print(colors[1][0])
+        print(colors[0][2])
+        print(colors[1][2])
