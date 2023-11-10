@@ -5,13 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ca839beb-b5a1-48cd-b024-88b1a56749f3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/color-recognition.py" beforeDir="false" afterPath="$PROJECT_DIR$/color_recognition.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hsv-color-rec-test.py" beforeDir="false" afterPath="$PROJECT_DIR$/hsv-color-rec-test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hsv-color-rec.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/hsv.py" beforeDir="false" afterPath="$PROJECT_DIR$/hsv.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/masks.py" beforeDir="false" afterPath="$PROJECT_DIR$/masks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hsv_color_rec.py" beforeDir="false" afterPath="$PROJECT_DIR$/hsv_color_rec.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -180,7 +177,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/hsv.py</url>
-          <line>44</line>
+          <line>47</line>
           <option name="timeStamp" value="5" />
         </line-breakpoint>
       </breakpoints>

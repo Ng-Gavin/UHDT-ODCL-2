@@ -6,7 +6,7 @@ from rembg import remove
 import xattr
 import plistlib
 import os
-from hsv import color_rec
+from hsv_color_rec import color_rec
 
 
 

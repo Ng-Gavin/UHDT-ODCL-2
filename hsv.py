@@ -20,18 +20,21 @@ def identify_color(cluster_center):
             return "WHITE"
     if v < 20:
         return "BLACK"
-
     if h > 156.625 or h <= 10:
         # if v < 155:
         #    return 'BROWN'
         if (h > 180 and (h-180) < -3) or h > 3:
-
             if 3 < h < 8:
                 if s < 149:
                     return "BROWN"
                 else:
                     return "RED"
-
+            if (h - 180) > -3:
+                if s < 200:
+                    return "BROWN"
+                else:
+                    return "RED"
+                return "RED"
             if s <= 105:
                 if s < 65:
                     return 'BROWN'
@@ -51,6 +54,12 @@ def identify_color(cluster_center):
         else:
             return 'RED'
     elif 10 < h <= 28:
+        if h > 25:
+            if v < 150:
+                return 'BROWN'
+            else:
+                return "ORANGE"
+
         if v < 135:
             if s < 90:
                 return "BROWN"  # 30 degrees

@@ -29,8 +29,6 @@ def color_rec (image_path):
 
     # Convert the image to
     img_hsv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2HSV)
-    plt.imshow(cv2.cvtColor(img_hsv, cv2.COLOR_HSV2RGB))
-    plt.show()
 
 
     """
@@ -88,20 +86,23 @@ def color_rec (image_path):
     #cv2.imshow('segmented', segmented_image)
     #cv2.waitKey(0)
     #cv2.destroyAllWindows()
-
-
-    mask1 = create_masks(segmented_image, colors[0][0], color_data)
+    figs, axs = plt.subplots(1, 3)
+    figs.suptitle(image_path)
+    axs[0].imshow(cv2.cvtColor(img_hsv, cv2.COLOR_HSV2RGB))
+    mask1 = create_masks_test(segmented_image, colors[0][0], color_data, 1)
     result = cv2.bitwise_and(segmented_image, segmented_image, mask=mask1)
-    plt.imshow(cv2.cvtColor(result, cv2.COLOR_HSV2RGB))
-    plt.show()
+    axs[1].imshow(cv2.cvtColor(result, cv2.COLOR_HSV2RGB))
+
     #cv2.imshow('mask1', mask1)
     #cv2.waitKey(0)
     #cv2.destroyAllWindows()
 
 
-    mask2 = create_masks(segmented_image, colors[1][0], color_data)
+    mask2 = create_masks_test(segmented_image, colors[1][0], color_data, 5)
     result = cv2.bitwise_and(segmented_image, segmented_image, mask=mask2)
-    plt.imshow(cv2.cvtColor(result, cv2.COLOR_HSV2RGB))
+    axs[2].imshow(cv2.cvtColor(result, cv2.COLOR_HSV2RGB))
+
+    plt.tight_layout()
     plt.show()
     #cv2.imshow('mask2', result)
     #cv2.waitKey(0)
@@ -109,4 +110,4 @@ def color_rec (image_path):
 
     return colors[0][0], colors[1][0], colors[0][2], colors[1][2]
 
-print(color_rec('../Training Data/Combination Set/6-image3-98.jpg'))
+print(color_rec('../Training Data/Combination Set/203-image6-55.jpg'))
