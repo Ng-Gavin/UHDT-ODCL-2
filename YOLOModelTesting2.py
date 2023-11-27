@@ -20,7 +20,7 @@ detection_model = AutoDetectionModel.from_pretrained(
     device='cuda:0'
 )
 
-dir = "FlightTests/Positive"
+dir = "FlightTests/RealSet1"
 start_time = time.time()
 for files in os.listdir(dir):
     image = Image.open(f"{dir}/{files}")
@@ -29,17 +29,19 @@ for files in os.listdir(dir):
         detection_model,
         slice_height=640,
         slice_width=640,
-        overlap_height_ratio=0.2,
-        overlap_width_ratio=0.2
+        overlap_height_ratio=0.11,
+        overlap_width_ratio=0.11
     )
 
     #Crops target from image
+    count = 0
     for i in range(len(result.object_prediction_list)):
-        BB = result.object_prediction_list[0].bbox.to_voc_bbox()
+        BB = result.object_prediction_list[i].bbox.to_voc_bbox()
         print(BB)
         name, fext = os.path.splitext(f"{files}")
         cropped = image.crop((BB[0], BB[1], BB[2], BB[3]))
-        cropped.save(f"results/{name}cropped.jpg")
+        cropped.save(f"results/Cropped2/{name}cropped{count}.jpg")
+        count += 1
             
     #result.export_visuals(export_dir="results/", file_name=f"{name}") #Saves whole image with bounding box labeled
 end_time = time.time()
