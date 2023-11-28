@@ -3,7 +3,7 @@ from PIL import Image, ImageEnhance
 import matplotlib.pyplot as plt
 import numpy as np
 from rembg import remove
-from hsv import identify_color
+from hsv_v2 import identify_color
 from masks import create_masks, create_masks_test
 
 def color_rec (image_path):
@@ -23,9 +23,9 @@ def color_rec (image_path):
     img = Image.open(image_path)
 
     # Remove background and replace with yellow:
-    img = remove(img)
-    bg_image = Image.new("RGBA", img.size, (255, 251, 0))
-    img = Image.alpha_composite(bg_image, img.convert('RGBA'))
+    #img = remove(img)
+    #bg_image = Image.new("RGBA", img.size, (255, 251, 0))
+    #img = Image.alpha_composite(bg_image, img.convert('RGBA'))
 
     # Convert the image to
     img_hsv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2HSV)
@@ -45,7 +45,7 @@ def color_rec (image_path):
 
     # Define criteria and apply kmeans()
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.85)
-    k = 8
+    k = 10
     retval, labels, centers = cv2.kmeans(pixels, k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
 
     # Convert back to 8-bit values
@@ -77,7 +77,7 @@ def color_rec (image_path):
 
     # Print the sorted data
     for color_name, count, percentage, label, hsv in color_data:
-        print(f"Label: {label}, Color: {color_name}, Count: {count}, Percentage: {percentage:.2f}")
+        print(f"Label: {label}, Color: {color_name} ({hsv}), Count: {count}, Percentage: {percentage:.2f}")
         if color_count[color_name] > 0 or color_name == 'BACKGROUND':
             continue
         else:
@@ -86,21 +86,23 @@ def color_rec (image_path):
     #cv2.imshow('segmented', segmented_image)
     #cv2.waitKey(0)
     #cv2.destroyAllWindows()
-    figs, axs = plt.subplots(1, 3)
+    figs, axs = plt.subplots(1, 4)
     figs.suptitle(image_path)
     axs[0].imshow(cv2.cvtColor(img_hsv, cv2.COLOR_HSV2RGB))
-    mask1 = create_masks_test(segmented_image, colors[0][0], color_data, 1)
+    axs[1].imshow(cv2.cvtColor(segmented_image, cv2.COLOR_HSV2RGB))
+    mask1 = create_masks_test(segmented_image, colors[0][0], color_data, 10)
     result = cv2.bitwise_and(segmented_image, segmented_image, mask=mask1)
-    axs[1].imshow(cv2.cvtColor(result, cv2.COLOR_HSV2RGB))
+    axs[2].imshow(cv2.cvtColor(result, cv2.COLOR_HSV2RGB))
 
     #cv2.imshow('mask1', mask1)
     #cv2.waitKey(0)
     #cv2.destroyAllWindows()
 
 
-    mask2 = create_masks_test(segmented_image, colors[1][0], color_data, 5)
+    mask2 = create_masks_test(segmented_image, colors[1][0], color_data, 10)
+    mask2 = create_masks_test(segmented_image, colors[1][0], color_data, 10)
     result = cv2.bitwise_and(segmented_image, segmented_image, mask=mask2)
-    axs[2].imshow(cv2.cvtColor(result, cv2.COLOR_HSV2RGB))
+    axs[3].imshow(cv2.cvtColor(result, cv2.COLOR_HSV2RGB))
 
     plt.tight_layout()
     plt.show()
@@ -110,4 +112,4 @@ def color_rec (image_path):
 
     return colors[0][0], colors[1][0], colors[0][2], colors[1][2]
 
-print(color_rec('../Training Data/Combination Set/203-image6-55.jpg'))
+print(color_rec("../Training Data/Select Cropped/image8cropped0.jpg"))

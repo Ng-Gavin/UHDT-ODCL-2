@@ -3,6 +3,7 @@ from PIL import Image, ImageEnhance
 import matplotlib.pyplot as plt
 import numpy as np
 from rembg import remove
+from masks import create_masks, create_masks_test
 
 def identify_color(cluster_center):
     # Determine ranges
@@ -16,19 +17,43 @@ def identify_color(cluster_center):
     if s < 30:
         if v < 50:
             return "BLACK"
-        if v > 250:
+        if v > 246:
             return "WHITE"
     if v < 20:
         return "BLACK"
-    if h > 156.625 or h <= 11:
-        # if v < 155:
-        #    return 'BROWN'
-        if h == 11:
-            if s < 128:
+    if h > 156.625 or h <= 10:
+        if s < 130:
+            if s < 40:
+                return 'BROWN'
+            if v < 165:
+                return 'BROWN'
+            elif v > 0.9 * 255:
+                if s > 0.45 * 255:
+                    return 'RED'
+                else:
+                    return 'ORANGE'
+            else:
+                return 'RED'
+        elif v > 0.9 * 255:
+            if s > 0.48 * 255:
+                return 'RED'
+            else:
                 return 'ORANGE'
+        else:
+            if s < 142:
+                return 'BROWN'
             else:
                 return 'RED'
 
+        """
+        if s < 160:
+
+        if v < 165:
+            return 'BROWN'
+        else:
+            return 'RED'
+        """
+        """
         if (h > 180 and (h-180) < -3) or h > 3:
             if 3 < h < 7:
                 if s < 149:
@@ -51,6 +76,7 @@ def identify_color(cluster_center):
                         return 'RED'
             else:
                 return "RED"
+            
         elif h < 3 or (h-180) > -3:
             if s < 200:
                 return "BROWN"
@@ -59,7 +85,18 @@ def identify_color(cluster_center):
             return "RED"
         else:
             return 'RED'
-    elif 11 < h <= 28:
+        
+    """
+    elif 10 < h <= 33:
+        if 28.5 < h < 33 and s > 250 and v > 250:
+            return 'BACKGROUND'
+        if s < 100:
+            return 'BROWN'
+        if v < 160:
+            return "BROWN"
+        else:
+            return 'ORANGE'
+        """
         if h > 25:
             if v < 180:
                 return 'BROWN'
@@ -73,23 +110,18 @@ def identify_color(cluster_center):
                 return "ORANGE"
         else:
             return "ORANGE"
-    elif 28 < h <= 93:
-        if 28.5 < h < 33:
-            return 'BACKGROUND'
-        else:
+    """
+    elif 33 < h <= 99:
             return "GREEN"
-    elif 93 < h <= 122:
-        if h < 110:
-            return "BLUE"
-        else:
-            if s < 70:
-                return 'PURPLE'
-            else:
-                return "BLUE"
+    elif 100 < h <= 122:
+        return "BLUE"
     elif 122 < h <= 156.625:
         if s < 20:
             return "BROWN"
-        return "PURPLE"
+        elif s < 43:
+            return 'BLUE'
+        else:
+            return "PURPLE"
     else:
         return "Unknown"
 
@@ -110,12 +142,21 @@ def color_rec (image_path):
     img = Image.open(image_path)
 
     # Remove background and replace with yellow:
-    img = remove(img)
-    bg_image = Image.new("RGBA", img.size, (255, 251, 0))
-    img = Image.alpha_composite(bg_image, img.convert('RGBA'))
+    #img = remove(img)
+   # bg_image = Image.new("RGBA", img.size, (255, 251, 0))
+    #img = Image.alpha_composite(bg_image, img.convert('RGBA'))
 
     # Convert the image to
     img_hsv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2HSV)
+
+
+    """
+    print(img_hsv.shape)
+    cv2.imshow('bruh', img_hsv)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    """
+
 
     # Reshape the image to a 2D array of pixels
     pixels = img_hsv.reshape((-1, 3))
@@ -123,7 +164,7 @@ def color_rec (image_path):
 
     # Define criteria and apply kmeans()
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.85)
-    k = 8
+    k = 10
     retval, labels, centers = cv2.kmeans(pixels, k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
 
     # Convert back to 8-bit values
@@ -145,6 +186,7 @@ def color_rec (image_path):
         percentage = (count / total_pixels) * 100
         hsv = np.array(centers[label]).tolist()
         color_data.append((color_name, count, percentage, label, hsv))
+        #print(label, ':', centers[label])
 
     # Sort by percentage in descending order
     color_data.sort(key=lambda x: x[2], reverse=True)
@@ -154,17 +196,39 @@ def color_rec (image_path):
 
     # Print the sorted data
     for color_name, count, percentage, label, hsv in color_data:
-        #print(f"Label: {label}, Color: {color_name}, Count: {count}, Percentage: {percentage:.2f}")
+        #print(f"Label: {label}, Color: {color_name} ({hsv}), Count: {count}, Percentage: {percentage:.2f}")
         if color_count[color_name] > 0 or color_name == 'BACKGROUND':
             continue
         else:
             colors.append((color_name, label, hsv, percentage))
             color_count[color_name] += 1
-    try:
-        return colors[0][0], colors[1][0], colors[0][2], colors[1][2]
-    except:
-        print(image_path)
-        print(colors[0][0])
-        print(colors[1][0])
-        print(colors[0][2])
-        print(colors[1][2])
+    #cv2.imshow('segmented', segmented_image)
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
+    figs, axs = plt.subplots(1, 4)
+    figs.suptitle(image_path)
+    axs[0].imshow(cv2.cvtColor(img_hsv, cv2.COLOR_HSV2RGB))
+    axs[1].imshow(cv2.cvtColor(segmented_image, cv2.COLOR_HSV2RGB))
+    mask1 = create_masks_test(segmented_image, colors[0][0], color_data, 10)
+    result = cv2.bitwise_and(segmented_image, segmented_image, mask=mask1)
+    axs[2].imshow(cv2.cvtColor(result, cv2.COLOR_HSV2RGB))
+
+    #cv2.imshow('mask1', mask1)
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
+
+
+    mask2 = create_masks_test(segmented_image, colors[1][0], color_data, 10)
+    mask2 = create_masks_test(segmented_image, colors[1][0], color_data, 10)
+    result = cv2.bitwise_and(segmented_image, segmented_image, mask=mask2)
+    axs[3].imshow(cv2.cvtColor(result, cv2.COLOR_HSV2RGB))
+
+    plt.tight_layout()
+    #plt.show()
+    #cv2.imshow('mask2', result)
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
+
+    return colors[0][0], colors[1][0], colors[0][2], colors[1][2]
+
+#print(color_rec('../Training Data/image_Sat Oct 28 22_52_59/image10.jpg'))

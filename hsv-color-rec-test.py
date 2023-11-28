@@ -6,7 +6,7 @@ from rembg import remove
 import xattr
 import plistlib
 import os
-from hsv_color_rec import color_rec
+from hsv_v2 import color_rec
 
 
 
@@ -126,10 +126,10 @@ def color_rec_test(directory_path):
     print(f'N: {len(images)}, Exact Matches: {exact_match}, Exact Matches and Switched Order: {order_switched}, At Least One: {at_least_one}')
     black, white, red, orange, brown, green, blue, purple = color_counts
     for key in color_counts.keys():
-        print(f'EXPECTED {key}: {color_counts[key]["expected"]}  DETECTED {key}: {color_counts[key]["detected"]} ({color_counts[key]["detected"]/color_counts[key]["expected"] * 100 if color_counts[key]["expected"] > 0 else "Detected " + str(color_counts[key]["detected"]) + "when none were detected"})')
+        print(f'EXPECTED {key}: {color_counts[key]["expected"]}  DETECTED {key}: {color_counts[key]["detected"]} ({color_counts[key]["detected"]/color_counts[key]["expected"] * 100 if color_counts[key]["expected"] > 0 else "Detected " + str(color_counts[key]["detected"]) + " when none were expected"})')
 
 
 
 # Specify the path to your directory
-path_to_directory = "../Training Data/Combination Set"
+path_to_directory = "../Training Data/Select Cropped"
 color_rec_test(path_to_directory)
