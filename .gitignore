@@ -8,6 +8,8 @@ hsv-color-rectest2.py
 hsv-color-rec1.py
 hsv-color-rec1.py
 Target Printouts/.DS_Store
+*.iml
+.idea
 .idea/inspectionProfiles/profiles_settings.xml
 .idea/2023–24.iml
 .idea/misc.xml
