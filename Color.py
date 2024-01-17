@@ -2,7 +2,6 @@ import cv2
 from PIL import Image, ImageEnhance
 import matplotlib.pyplot as plt
 import numpy as np
-from rembg import remove
 from masks import create_masks, create_masks_test
 
 def identify_color(cluster_center):
@@ -210,25 +209,37 @@ def color_rec (image_path):
     axs[0].imshow(cv2.cvtColor(img_hsv, cv2.COLOR_HSV2RGB))
     axs[1].imshow(cv2.cvtColor(segmented_image, cv2.COLOR_HSV2RGB))
     mask1 = create_masks_test(segmented_image, colors[0][0], color_data, 10)
-    result = cv2.bitwise_and(segmented_image, segmented_image, mask=mask1)
-    axs[2].imshow(cv2.cvtColor(result, cv2.COLOR_HSV2RGB))
+    result1 = cv2.bitwise_and(segmented_image, segmented_image, mask=mask1)
+    result1 = cv2.cvtColor(result1, cv2.COLOR_HSV2RGB)
+    axs[2].imshow(result1)
 
-    #cv2.imshow('mask1', mask1)
+    #cv2.imshow('mask1', result1)
     #cv2.waitKey(0)
     #cv2.destroyAllWindows()
 
-
     mask2 = create_masks_test(segmented_image, colors[1][0], color_data, 10)
     mask2 = create_masks_test(segmented_image, colors[1][0], color_data, 10)
-    result = cv2.bitwise_and(segmented_image, segmented_image, mask=mask2)
-    axs[3].imshow(cv2.cvtColor(result, cv2.COLOR_HSV2RGB))
+    result2 = cv2.bitwise_and(segmented_image, segmented_image, mask=mask2)
+    result2 = cv2.cvtColor(result2, cv2.COLOR_HSV2RGB)
+    axs[3].imshow(result2)
 
+    #cv2.imshow('mask2', result2)
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
     plt.tight_layout()
-    #plt.show()
-    #cv2.imshow('mask2', result)
-    #cv2.waitKey(0)
-    #cv2.destroyAllWindows()
+    plt.show()
 
-    return colors[0][0], colors[1][0], colors[0][2], colors[1][2]
+    return colors[0][0], colors[1][0], result1, result2
+"""
+Color1, Color2, Mask1, Mask2 = color_rec('results/Cropped nanotarget1/image12cropped0.jpg')
 
-#print(color_rec('../Training Data/image_Sat Oct 28 22_52_59/image10.jpg'))
+print(Color1, Color2)
+
+cv2.imshow('mask1', Mask1)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+cv2.imshow('mask2', Mask2)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+"""
