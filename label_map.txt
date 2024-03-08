@@ -1,0 +1,8 @@
+circle
+cross
+pentagon
+quartercircle
+rectangle
+semicircle
+star
+triangle

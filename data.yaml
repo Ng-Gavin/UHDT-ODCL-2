@@ -1,0 +1,12 @@
+nc: 8
+names:
+  [
+    "circle",
+    "cross",
+    "pentagon",
+    "quartercircle",
+    "rectangle",
+    "semicircle",
+    "star",
+    "triangle",
+  ]
