@@ -164,7 +164,7 @@ def compare(payload, target):
 #print(targets)
 #print(sort_targets(test_targets, 6, 6))
 
-
+#This function matches the payloads to the given targets.
 def order_payloads(payloads, targets):
     payload_order = []
     target_scores = []
@@ -179,13 +179,14 @@ def order_payloads(payloads, targets):
         for payload in payloads:
             payload_score = compare(payload, target)
             payload_scores.append(payload_score)
+        #print("payload scores: ", payload_scores)
         target_scores.append(payload_scores)
 #Take the highest payload score's index for each target
     print("target scores: ", target_scores)
-    print("payload scores: ", payload_scores)
     for payload_scores in target_scores:
+        print("payload scores being checked:", payload_scores)
         payload_order.append(payload_scores.index(max(payload_scores)))
-
+        print("payload order:", payload_order)
     for index in payload_order:
         if payload_order.count(index) > 1: hasConflicts = True
         else: hasConflicts = False
@@ -199,8 +200,13 @@ def order_payloads(payloads, targets):
             for j in range(len(unassigned_targets)):
                 payload_order[unassigned_targets[j]] = unassigned_payloads[j]
         for payload_index in payload_order:
+            print(f'Dock: {payloads[payload_index].dock}, Shape:{payloads[payload_index].shape}, Shape Color: {payloads[payload_index].shapeColor}, Alphnum Color: {payloads[payload_index].alphanumColor}, Alphnum: {payloads[payload_index].alphanum}')
             ordered_payloads.append(payloads[payload_index])
     else:
         for payload_index in payload_order:
+            print(f'Dock: {payloads[payload_index].dock}, Shape:{payloads[payload_index].shape}, Shape Color: {payloads[payload_index].shapeColor}, Alphnum Color: {payloads[payload_index].alphanumColor}, Alphnum: {payloads[payload_index].alphanum}')
             ordered_payloads.append(payloads[payload_index])
     return ordered_payloads
+
+    # note: ordered_payloads returns the payloads ordered in the order of the targets.
+    # In other words, if the targets come in the order of 3 1 2 4, a "correct" ordered_payloads would hold payload 3, payload 1, payload 2, payload 4.

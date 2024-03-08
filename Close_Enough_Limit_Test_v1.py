@@ -5,30 +5,30 @@ from Close_Enough_Test_Cases_Test import Target, Payload, compare, order_payload
 #Payload 1 Info (The Givens)
 dock1 = 1
 shape1 = "SEMICIRCLE"
-shapeColor1 = "PURPLE"
-alphanumColor1 = "BROWN"
+shapeColor1 = "BLUE"
+alphanumColor1 = "WHITE"
 alphanum1 = "4"
 
 #Payload 2 Info
 dock2 = 2
-shape2 = "TRIANGLE"
-shapeColor2 = "BLUE" 
-alphanumColor2 = "ORANGE"
-alphanum2 = "M"
+shape2 = "CIRCLE"
+shapeColor2 = "RED" 
+alphanumColor2 = "PURPLE"
+alphanum2 = "G"
 
 #Payload 3 Info
 dock3 = 3
-shape3 = "STAR"
-shapeColor3 = "WHITE" 
-alphanumColor3 = "RED"
-alphanum3 = "Q"
+shape3 = "PENTAGON"
+shapeColor3 = "BROWN" 
+alphanumColor3 = "GREEN"
+alphanum3 = "1"
 
 #Payload 4 Info
 dock4 = 4
-shape4 = "PENTAGON"
+shape4 = "QUARTERCIRCLE"
 shapeColor4 = "YELLOW" 
-alphanumColor4 = "GREEN"
-alphanum4 = "C"
+alphanumColor4 = "WHITE"
+alphanum4 = "K"
 
 #Payload 5 Info
 dock5 = 5
@@ -49,26 +49,26 @@ def matchCheck(objectList1,objectList2):
     
 
 #TODO Create random a gen for "detected" target attributes, run through comparison/test cases n amount of times.
-
-targets = []
-targets.append(Target('SEMICIRCLE', 10, 9, 'BROWN', 'ORANGE', '3',3))
-targets.append(Target('SQUARE', 10, 9, 'PURPLE', 'ORANGE', '7',1))
-targets.append(Target('CIRCLE', 10, 9, 'WHITE', 'PURPLE', 'K',4))
-targets.append(Target('RECTANGLE', 10, 9, 'BLUE', 'YELLOW', 'D',2))
-
 payloads = []
 payloads.append(Payload(dock1, shape1,shapeColor1, alphanumColor1, alphanum1))
 payloads.append(Payload(dock2, shape2,shapeColor2, alphanumColor2, alphanum2))
 payloads.append(Payload(dock3, shape3,shapeColor3, alphanumColor3, alphanum3))
 payloads.append(Payload(dock4, shape4,shapeColor4, alphanumColor4, alphanum4))
 
+targets = []
+targets.append(Target('OCTAGON', 10, 9, 'YELLOW', 'PURPLE', 'K',4))
+targets.append(Target('SEMICIRCLE', 10, 9, 'GRAY', 'ORANGE', 'M',1))
+targets.append(Target('RECTANGLE', 10, 9, 'BLUE', 'GREEN', 'L',3))
+targets.append(Target('SQUARE', 10, 9, 'PURPLE', 'ORANGE', 'C',2))
 
-ordered_loads = order_payloads(targets,payloads)
+
+#ordered_loads holds the payloads in the order of the targets (see close_enough_test_cases_test.py)
+ordered_loads = order_payloads(payloads,targets)
 
 for i in range(len(ordered_loads)):
-    print("Given: ",printObjectValues(payloads))
+    print("Detected Target: ",printObjectValues(targets))
     print("Ordered: ",printObjectValues(ordered_loads),"\n")
-    matchCheck(ordered_loads,payloads)
+    matchCheck(ordered_loads,targets)
 
 '''
 for item in range(len(targets)):
