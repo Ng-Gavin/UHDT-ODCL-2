@@ -160,6 +160,7 @@ def color_rec (image_path):
         else:
             colors.append((color_name, label, hsv, percentage))
             color_count[color_name] += 1
+
     try:
         return colors[0][0], colors[1][0], colors[0][2], colors[1][2]
     except:

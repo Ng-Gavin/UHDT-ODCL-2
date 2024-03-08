@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from rembg import remove
 from masks import create_masks, create_masks_test
+from pathlib import Path
+
 
 def identify_color(cluster_center):
     # Determine ranges
@@ -22,28 +24,31 @@ def identify_color(cluster_center):
     if v < 20:
         return "BLACK"
     if h > 156.625 or h <= 10:
-        if s < 130:
-            if s < 40:
-                return 'BROWN'
-            if v < 165:
-                return 'BROWN'
+        if h > 9:
+            return 'BROWN'
+        else:
+            if s < 130:
+                if s < 40:
+                    return 'BROWN'
+                if v < 165:
+                    return 'BROWN'
+                elif v > 0.9 * 255:
+                    if s > 0.45 * 255:
+                        return 'RED'
+                    else:
+                        return 'ORANGE'
+                else:
+                    return 'RED'
             elif v > 0.9 * 255:
-                if s > 0.45 * 255:
+                if s > 0.48 * 255:
                     return 'RED'
                 else:
                     return 'ORANGE'
             else:
-                return 'RED'
-        elif v > 0.9 * 255:
-            if s > 0.48 * 255:
-                return 'RED'
-            else:
-                return 'ORANGE'
-        else:
-            if s < 142:
-                return 'BROWN'
-            else:
-                return 'RED'
+                if s < 142:
+                    return 'BROWN'
+                else:
+                    return 'RED'
 
         """
         if s < 160:
@@ -113,7 +118,7 @@ def identify_color(cluster_center):
     """
     elif 33 < h <= 99:
             return "GREEN"
-    elif 100 < h <= 122:
+    elif 99 < h <= 122:
         return "BLUE"
     elif 122 < h <= 156.625:
         if s < 20:
@@ -123,7 +128,7 @@ def identify_color(cluster_center):
         else:
             return "PURPLE"
     else:
-        return "Unknown"
+        return "UNKNOWN"
 
 def color_rec (image_path):
     color_count = {
@@ -142,10 +147,11 @@ def color_rec (image_path):
     img = Image.open(image_path)
 
     # Remove background and replace with yellow:
-    #img = remove(img)
-   # bg_image = Image.new("RGBA", img.size, (255, 251, 0))
-    #img = Image.alpha_composite(bg_image, img.convert('RGBA'))
-
+    img = remove(img)
+    bg_image = Image.new("RGBA", img.size, (255, 251, 0))
+    img = Image.alpha_composite(bg_image, img.convert('RGBA'))
+    img_test = ImageEnhance.Contrast(img)
+    #img.show()
     # Convert the image to
     img_hsv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2HSV)
 
@@ -212,7 +218,10 @@ def color_rec (image_path):
     mask1 = create_masks_test(segmented_image, colors[0][0], color_data, 10)
     result = cv2.bitwise_and(segmented_image, segmented_image, mask=mask1)
     axs[2].imshow(cv2.cvtColor(result, cv2.COLOR_HSV2RGB))
-
+    file_name = f'./dummy/{Path(image_path).stem}_mask1{Path(image_path).suffix}'
+    #cv2.imwrite(file_name, mask1)
+    file_name = f'./dummy/{Path(image_path).stem}_mask1_color{Path(image_path).suffix}'
+    #cv2.imwrite(file_name, result)
     #cv2.imshow('mask1', mask1)
     #cv2.waitKey(0)
     #cv2.destroyAllWindows()
@@ -222,7 +231,10 @@ def color_rec (image_path):
     mask2 = create_masks_test(segmented_image, colors[1][0], color_data, 10)
     result = cv2.bitwise_and(segmented_image, segmented_image, mask=mask2)
     axs[3].imshow(cv2.cvtColor(result, cv2.COLOR_HSV2RGB))
-
+    file_name = f'./dummy/{Path(image_path).stem}_mask2{Path(image_path).suffix}'
+    #cv2.imwrite(file_name, mask2)
+    file_name = f'./dummy/{Path(image_path).stem}_mask2_color{Path(image_path).suffix}'
+    #cv2.imwrite(file_name, result)
     plt.tight_layout()
     #plt.show()
     #cv2.imshow('mask2', result)
@@ -231,4 +243,4 @@ def color_rec (image_path):
 
     return colors[0][0], colors[1][0], colors[0][2], colors[1][2]
 
-#print(color_rec('../Training Data/image_Sat Oct 28 22_52_59/image10.jpg'))
+print(color_rec('../Training Data/image_Sat Oct 28 22_52_59 copy removed/image19 copy.jpg'))

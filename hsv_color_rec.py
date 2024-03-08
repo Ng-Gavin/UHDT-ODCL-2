@@ -105,11 +105,11 @@ def color_rec (image_path):
     axs[3].imshow(cv2.cvtColor(result, cv2.COLOR_HSV2RGB))
 
     plt.tight_layout()
-    plt.show()
+    #plt.show()
     #cv2.imshow('mask2', result)
     #cv2.waitKey(0)
     #cv2.destroyAllWindows()
 
     return colors[0][0], colors[1][0], colors[0][2], colors[1][2]
 
-print(color_rec("../Training Data/Select Cropped/image8cropped0.jpg"))
+print(color_rec("../Training Data/Select Cropped/image53cropped0.jpg"))

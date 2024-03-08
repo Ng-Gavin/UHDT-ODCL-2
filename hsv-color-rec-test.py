@@ -6,7 +6,8 @@ from rembg import remove
 import xattr
 import plistlib
 import os
-from hsv_v2 import color_rec
+from hsv_v3 import color_rec
+import time
 
 
 
@@ -31,9 +32,6 @@ def get_file_comment(file_path):
     else:
         return None
 
-#print(color_rec('../Training Data/Real Life Cropped Targerts/image2-0.jpg'))
-
-#print(get_file_comment('../Training Data/Real Life Cropped Targets/image2-0.jpg'))
 
 def color_rec_test(directory_path):
     # List all files and directories in the specified path
@@ -74,8 +72,13 @@ def color_rec_test(directory_path):
         'PURPLE': {
             'expected': 0,
             'detected': 0
+        },
+        'UNKNOWN': {
+            'expected': 0,
+            'detected': 0
         }
     }
+    num_images = 0
     for image in images:
         bg_color = ""
         alphanum_color = ""
@@ -83,6 +86,7 @@ def color_rec_test(directory_path):
         full_path = os.path.join(directory_path, image)
         if os.path.isfile(full_path):
             if full_path.lower().endswith(('.jpg', '.jpeg', 'png')):
+                num_images += 1
                 try:
                     bg_color, alphanum_color = get_file_comment(full_path).split(' ')
                 except:
@@ -95,10 +99,9 @@ def color_rec_test(directory_path):
             else:
                 continue
         try:
-            detected_bg_color, detected_alphanum_color, bg_hsv, alphanum_hsv = color_rec(full_path)
+            #detected_bg_color, detected_alphanum_color, bg_hsv, alphanum_hsv, bg_mask, alphanum_mask = color_rec(full_path)
+            detected_bg_color, detected_alphanum_color, bg_hsv, alphanum_hsv, bg_mask, alphanum_mask = color_rec(cv2.imread(full_path))
         except:
-            print(color_rec(full_path))
-            print(color_rec(full_path)[0], color_rec(full_path)[1], color_rec(full_path)[2],color_rec(full_path)[3],)
             print(full_path + " is causing an error?")
         color_counts[detected_bg_color]['detected'] += 1
         color_counts[detected_alphanum_color]['detected'] += 1
@@ -108,6 +111,8 @@ def color_rec_test(directory_path):
                 exact_match += 1
                 order_switched += 1
                 at_least_one += 1
+                print(
+                    f'N: {progress}) Path: {full_path}, Detected BG: {detected_bg_color} ({bg_hsv}), Expected BG: {bg_color}, Detected Alphanum: {detected_alphanum_color} ({alphanum_hsv}), Expected Alphanum: {alphanum_color} ::EXACT::')
             elif detected_bg_color == alphanum_color and detected_alphanum_color == bg_color:
                 order_switched += 1
                 at_least_one += 1
@@ -123,8 +128,8 @@ def color_rec_test(directory_path):
         else:
             print(f'N: {progress}) Path: {full_path}, Detected BG: {detected_bg_color} ({bg_hsv}), Expected BG: {bg_color}, Detected Alphanum: {detected_alphanum_color} ({alphanum_hsv}), Expected Alphanum: {alphanum_color}')
     print('RESULTS')
-    print(f'N: {len(images)}, Exact Matches: {exact_match}, Exact Matches and Switched Order: {order_switched}, At Least One: {at_least_one}')
-    black, white, red, orange, brown, green, blue, purple = color_counts
+    print(f'N: {num_images}, Exact Matches: {exact_match}, Exact Matches and Switched Order: {order_switched}, At Least One: {at_least_one}')
+    black, white, red, orange, brown, green, blue, purple, unknown = color_counts
     for key in color_counts.keys():
         print(f'EXPECTED {key}: {color_counts[key]["expected"]}  DETECTED {key}: {color_counts[key]["detected"]} ({color_counts[key]["detected"]/color_counts[key]["expected"] * 100 if color_counts[key]["expected"] > 0 else "Detected " + str(color_counts[key]["detected"]) + " when none were expected"})')
 

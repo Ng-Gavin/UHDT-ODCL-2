@@ -6,7 +6,7 @@ from rembg import remove
 import xattr
 import plistlib
 import os
-from hsv import color_rec
+from hsv_v3 import color_rec
 from osxmetadata import *
 import subprocess
 
@@ -69,7 +69,8 @@ def color_rec_test(directory_path):
             if full_path.lower().endswith(('.jpg', '.jpeg', 'png')):
                 attr_name = "kMDItemComment"
                 try:
-                    detected_bg_color, detected_alphanum_color, bg_hsv, alphanum_hsv = color_rec(full_path)
+                    img = cv2.imread(full_path)
+                    detected_bg_color, detected_alphanum_color, bg_hsv, alphanum_hsv, bg_mask, alphanum_mask = color_rec(img)
                     values = f'{detected_bg_color} {detected_alphanum_color}'
                     md = OSXMetaData(full_path)
                     md.set(attr_name, values)
@@ -83,6 +84,6 @@ def color_rec_test(directory_path):
 
 
 # Specify the path to your directory
-path_to_directory = "../Training Data/image_Sat Oct 28 22_52_59"
+path_to_directory = "../Training Data/Select Cropped"
 color_rec_test(path_to_directory)
 
