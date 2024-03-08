@@ -2,7 +2,7 @@ import math
 
 
 class Target:
-    def __init__(self, dock, shape, latitude, longitude, shapeColor, alphanumColor, alphanum):
+    def __init__(self, shape, latitude, longitude, shapeColor, alphanumColor, alphanum, dock = 0):
         self.dock = dock # For testing purposes
         self.shape = shape
         self.latitude = latitude
@@ -170,7 +170,7 @@ def order_payloads(payloads, targets):
     target_scores = []
     hasConflicts = False
     unassigned_targets = []
-    unassigned_payloads = [0, 1, 2, 3, 4]
+    unassigned_payloads = [0, 1, 2, 3] #removed 4 (or 5th element) for testing purposes.
     ordered_payloads = []
 
 #For each target, compare to all the payloads, generate a similarity score for each payload
@@ -181,6 +181,8 @@ def order_payloads(payloads, targets):
             payload_scores.append(payload_score)
         target_scores.append(payload_scores)
 #Take the highest payload score's index for each target
+    print("target scores: ", target_scores)
+    print("payload scores: ", payload_scores)
     for payload_scores in target_scores:
         payload_order.append(payload_scores.index(max(payload_scores)))
 
